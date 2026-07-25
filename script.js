@@ -844,24 +844,36 @@ function initPreloader() {
   let progress = 0;
   let particles = [];
   let animationId = null;
-  const numParticles = 900;
+  const numParticles = 850;
   
   // Projection variables
-  const tiltAngle = 68 * Math.PI / 180; // 68 degree Y-axis tilt for perspective grid
-  const scale = 1.1;
+  const tiltAngle = 65 * Math.PI / 180; // 65 degree tilt
+  const scale = 1.15;
 
-  // Log sequence checkpoints
+  // Log sequence checkpoints matching progress milestones
   const bootLogs = [
     { threshold: 0, text: "&gt; INITIALIZING SYNAPSE-NX7 DIAGNOSTICS BOOT..." },
-    { threshold: 10, text: "&gt; ESTABLISHING QUANTUM CORE TELEMETRY PORT..." },
-    { threshold: 22, text: "&gt; PARSING CONVOLUTIONAL SYNAPTIC PATHWAYS... OK" },
-    { threshold: 38, text: "&gt; LOADING ATTENTION LAYERS DECODING BUFFER... [64 HEADS]" },
-    { threshold: 55, text: "&gt; ALLOCATING RESIDUAL CONNECTION MEMORY MATRIX... [SUCCESS]" },
-    { threshold: 72, text: "&gt; VERIFYING INFERENCE Latency: NOMINAL // 2.4ms" },
-    { threshold: 85, text: "&gt; ALIGNING HOLOGRAM TELEMETRY GRID MATRIX..." },
-    { threshold: 97, text: "&gt; SYNAPSTIC CORE NOMINAL. INITIALIZING OVERVIEW DISPLAY..." }
+    { threshold: 12, text: "&gt; MAPPING COGNITIVE MEMORY SECTORS... OK" },
+    { threshold: 22, text: "&gt; ESTABLISHING NEURAL PORTFOLIO DATA STREAM..." },
+    { threshold: 35, text: "&gt; SYNAPSE PIPELINES LOADED. TRIGGERING CONVERGENCE..." },
+    { threshold: 45, text: "&gt; CORE CONVERGENCE ACTIVE. COLLAPSING ORBITAL SHAPES..." },
+    { threshold: 62, text: "&gt; RADAR CORE ALIGNMENT LOCKED. STABILIZING DISK GRID..." },
+    { threshold: 82, text: "&gt; TELEMETRY BEAM PROJECTED. RESOLVING FLOATING WIDGETS..." },
+    { threshold: 96, text: "&gt; SYNAPSTIC CORE NOMINAL. PORTFOLIO ACTIVATED." }
   ];
   let activeLogIndex = -1;
+
+  // Vertical data stream line arrays for Phase 1
+  let dataStreams = [];
+  for (let i = 0; i < 22; i++) {
+    dataStreams.push({
+      r: Math.random() * 180 + 15,
+      angle: Math.random() * Math.PI * 2,
+      maxHeight: Math.random() * 100 + 40,
+      currentHeight: 0,
+      packets: [Math.random(), Math.random(), Math.random()] // Vertical particle offsets
+    });
+  }
 
   // 1. Resize Handler
   function resize() {
@@ -878,169 +890,337 @@ function initPreloader() {
     const colors = ['#06b6d4', '#8b5cf6', '#f43f5e', '#ffffff', '#3b82f6'];
 
     for (let i = 0; i < numParticles; i++) {
-      // Core density distribution: distribute points closer to the center
-      const r = Math.pow(Math.random(), 2.2) * 230 + 5;
+      const r = Math.pow(Math.random(), 2.2) * 220 + 5;
       const arm = Math.floor(Math.random() * 2); // 2 Spiral Arms
-      const baseAngle = arm * Math.PI + r * 0.02; // Spiral math
-      const spread = (Math.random() - 0.5) * 0.45;
+      const baseAngle = arm * Math.PI + r * 0.022;
+      const spread = (Math.random() - 0.5) * 0.42;
       
-      // Vertical core thickness (fluffiness) decays farther out
-      const maxZ = Math.max(2, 28 * (1 - r / 245));
+      const maxZ = Math.max(2, 26 * (1 - r / 235));
       const z = (Math.random() - 0.5) * maxZ;
 
       particles.push({
         r: r,
         theta: baseAngle + spread,
         z: z,
-        speed: 0.003 + (1 / (r + 20)) * 0.35, // Keplerian orbit: closer rotates faster
-        size: 0.6 + Math.random() * 1.5,
+        speed: 0.002 + (1 / (r + 15)) * 0.28,
+        size: 0.5 + Math.random() * 1.5,
         color: colors[Math.floor(Math.random() * colors.length)]
       });
     }
   }
 
-  // Define vertical indicators (similar to reference image HUD labels)
-  let hudIndicators = [
-    { r: 40, arm: 0, height: 100, label: "CORE_ACTIVE: 99.8%", angleOffset: 0.2 },
-    { r: 120, arm: 1, height: 160, label: "MAPPING_SYNAPSES: 73%", angleOffset: 0.8 },
-    { r: 70, arm: 0, height: 80, label: "SYS_TEMP: NOMINAL", angleOffset: 1.4 },
-    { r: 160, arm: 1, height: 120, label: "LATENCY: 2.4ms", angleOffset: -0.5 }
-  ];
-
-  // 3. Render Loop
+  // 3. Main Render Loop
   function draw() {
     const w = canvas.width / (window.devicePixelRatio || 1);
     const h = canvas.height / (window.devicePixelRatio || 1);
     const cx = w / 2;
-    const cy = h / 2 - 30; // Shift center up slightly for layout aesthetics
+    const cy = h / 2 - 20;
 
     ctx.clearRect(0, 0, w, h);
 
-    // Grid details
     const cosTilt = Math.cos(tiltAngle);
     const sinTilt = Math.sin(tiltAngle);
 
-    // Coordinate Projection Function
+    // Projection calculation
     function project(rx, ry, rz) {
-      // Perspective projection parameters
       const px = rx * scale;
-      // orthographic scale with Y compressed by tilt
       const py = (ry * cosTilt + rz * sinTilt) * scale;
       return { x: cx + px, y: cy + py };
     }
 
-    // A. Draw concentric grid ellipses underneath the galaxy core
-    ctx.strokeStyle = 'rgba(6, 182, 212, 0.04)';
-    ctx.lineWidth = 1;
-    for (let radius = 50; radius <= 250; radius += 50) {
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, radius * scale, radius * scale * cosTilt, 0, 0, Math.PI * 2);
-      ctx.stroke();
+    // Determine current phase based on progress
+    let phase = 0;
+    if (progress < 20) phase = 0;          // 0:00 - START
+    else if (progress < 40) phase = 1;     // 0:01 - DATA STREAM
+    else if (progress < 60) phase = 2;     // 0:02 - CONVERGING (Imploding)
+    else if (progress < 80) phase = 3;     // 0:03 - FORMATION (Circular Radar Grid)
+    else if (progress < 95) phase = 4;     // 0:04 - STRUCTURE READY (Telemetry Beam)
+    else phase = 5;                        // 0:05 - ACTIVATED
+
+    // ==========================================
+    // PHASE DRAWING STAGES
+    // ==========================================
+
+    // A. Perspective grid background (Drawn in Phase 0, 1, and fades out in Phase 2)
+    let gridAlpha = 0.04;
+    if (phase === 2) {
+      gridAlpha = 0.04 * (1 - (progress - 40) / 20);
+    } else if (phase > 2) {
+      gridAlpha = 0;
+    }
+    
+    if (gridAlpha > 0) {
+      ctx.strokeStyle = `rgba(6, 182, 212, ${gridAlpha})`;
+      ctx.lineWidth = 1;
+      for (let radius = 50; radius <= 250; radius += 50) {
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, radius * scale, radius * scale * cosTilt, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
     }
 
-    // B. Draw Concentric Radar Circular Dials at Galaxy Core
-    ctx.strokeStyle = 'rgba(139, 92, 246, 0.12)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([8, 15]);
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, 35 * scale, 35 * scale * cosTilt, 0, progress * 0.015, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.strokeStyle = 'rgba(244, 63, 94, 0.12)';
-    ctx.setLineDash([40, 20]);
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, 80 * scale, 80 * scale * cosTilt, 0, -progress * 0.008, Math.PI * 2);
-    ctx.stroke();
-    ctx.setLineDash([]); // Reset line dash
-
-    // C. Draw Particles (Stars)
-    particles.forEach(p => {
-      p.theta += p.speed; // Rotation
-
-      // Local 3D Coordinates
-      const rx = p.r * Math.cos(p.theta);
-      const ry = p.r * Math.sin(p.theta);
+    // B. PHASE 1: DATA STREAM - Draw vertical neon blue stems and particles rising
+    if (phase >= 1 && phase <= 2) {
+      const streamFade = phase === 2 ? (1 - (progress - 40) / 20) : 1;
       
-      const pt = project(rx, ry, p.z);
+      dataStreams.forEach(stream => {
+        // Line calculations
+        const rx = stream.r * Math.cos(stream.angle + progress * 0.003);
+        const ry = stream.r * Math.sin(stream.angle + progress * 0.003);
+        
+        const ptBase = project(rx, ry, 0);
+        
+        // Rise line height over Phase 1
+        const lineFactor = Math.min(1, (progress - 20) / 20);
+        const currentHeight = stream.maxHeight * lineFactor;
+        const ptTop = project(rx, ry, -currentHeight);
 
-      // Render star particle
+        // Draw line stem
+        ctx.beginPath();
+        ctx.moveTo(ptBase.x, ptBase.y);
+        ctx.lineTo(ptTop.x, ptTop.y);
+        ctx.strokeStyle = `rgba(6, 182, 212, ${0.15 * streamFade})`;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+
+        // Draw ascending particles along stems
+        stream.packets.forEach((offset, idx) => {
+          stream.packets[idx] += 0.015; // Move packet up
+          if (stream.packets[idx] > 1) stream.packets[idx] = 0;
+          
+          const packetHeight = currentHeight * stream.packets[idx];
+          const ptPacket = project(rx, ry, -packetHeight);
+
+          ctx.beginPath();
+          ctx.arc(ptPacket.x, ptPacket.y, 1.2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(6, 182, 212, ${0.7 * streamFade})`;
+          ctx.shadowBlur = 4;
+          ctx.shadowColor = '#06b6d4';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+      });
+    }
+
+    // C. PHASE 2: CONVERGING - Implosion logic collapsing radii of stars
+    let collapseFactor = 1.0;
+    let speedMult = 1.0;
+    if (phase === 2) {
+      const t = (progress - 40) / 20; // 0 to 1
+      const ease = t * t * (3 - 2 * t); // Smoothstep easing
+      collapseFactor = 1.0 - ease * 0.92; // Contract to 8% radius
+      speedMult = 1.0 + ease * 6.5; // Spin faster
+    } else if (phase >= 3) {
+      collapseFactor = 0.08;
+      speedMult = 7.5;
+    }
+
+    // D. Particles Drawing
+    particles.forEach(p => {
+      p.theta += p.speed * speedMult;
+
+      const currentR = p.r * collapseFactor;
+      const rx = currentR * Math.cos(p.theta);
+      const ry = currentR * Math.sin(p.theta);
+      const pt = project(rx, ry, p.z * collapseFactor);
+
       ctx.fillStyle = p.color;
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, p.size, 0, Math.PI * 2);
       
-      // Give core stars and white stars slight glows
-      if (p.r < 30 || p.color === '#ffffff') {
-        ctx.shadowBlur = p.size * 3;
+      // Dense glow elements
+      if (currentR < 15 || p.color === '#ffffff') {
+        ctx.shadowBlur = p.size * 3.5;
         ctx.shadowColor = p.color;
       }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Draw faint imploding radial lines to core in Phase 2
+      if (phase === 2 && Math.random() < 0.005) {
+        ctx.beginPath();
+        ctx.moveTo(pt.x, pt.y);
+        const corePt = project(0, 0, 0);
+        ctx.lineTo(corePt.x, corePt.y);
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.05)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    });
+
+    // E. PHASE 3: FORMATION - Concentric circular radar lines expanding outwards
+    if (phase >= 3) {
+      const maxRadius = 240;
+      const ringSpeed = 2.4;
       
-      ctx.fill();
-      ctx.shadowBlur = 0; // Reset
-    });
+      // Calculate concentric waves based on progress
+      const factor1 = (progress - 60) / 20; // 0 to 1
+      const R1 = factor1 * maxRadius;
+      const alpha1 = Math.max(0, 0.3 * (1 - factor1));
 
-    // D. Draw vertical hologram HUD lines (rising indicators)
-    hudIndicators.forEach((ind, idx) => {
-      // Calculate target indicator angle
-      const theta = ind.arm * Math.PI + ind.r * 0.02 + progress * 0.005 + ind.angleOffset;
-      const rx = ind.r * Math.cos(theta);
-      const ry = ind.r * Math.sin(theta);
+      // Wave 1
+      if (alpha1 > 0) {
+        ctx.strokeStyle = `rgba(6, 182, 212, ${alpha1})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, R1 * scale, R1 * scale * cosTilt, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
 
-      // Bottom projection point (base of galaxy)
-      const ptBase = project(rx, ry, 0);
-      // Top projection point (height offset)
-      const ptTop = project(rx, ry, -ind.height);
+      // Wave 2 (delayed offset)
+      if (progress > 68) {
+        const factor2 = (progress - 68) / 12; // 0 to 1
+        const R2 = factor2 * maxRadius;
+        const alpha2 = Math.max(0, 0.25 * (1 - factor2));
+        if (alpha2 > 0) {
+          ctx.strokeStyle = `rgba(139, 92, 246, ${alpha2})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, R2 * scale, R2 * scale * cosTilt, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
 
-      // Color scheme alternate
-      const accentColor = idx % 2 === 0 ? '#06b6d4' : '#f43f5e';
-      const accentGlow = idx % 2 === 0 ? 'rgba(6, 182, 212, 0.5)' : 'rgba(244, 63, 94, 0.5)';
-
-      // Draw vertical stem line
-      ctx.beginPath();
-      ctx.moveTo(ptBase.x, ptBase.y);
-      ctx.lineTo(ptTop.x, ptTop.y);
-      ctx.strokeStyle = idx % 2 === 0 ? 'rgba(6, 182, 212, 0.25)' : 'rgba(244, 63, 94, 0.25)';
+      // Base concentric solid indicators at core
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.2)';
       ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 32 * scale, 32 * scale * cosTilt, 0, 0, Math.PI * 2);
       ctx.stroke();
-
-      // Draw top horizontal branching indicator line
-      const branchLength = idx % 2 === 0 ? 30 : -35;
+      
+      ctx.strokeStyle = 'rgba(139, 92, 246, 0.15)';
       ctx.beginPath();
-      ctx.moveTo(ptTop.x, ptTop.y);
-      ctx.lineTo(ptTop.x + branchLength, ptTop.y);
+      ctx.ellipse(cx, cy, 60 * scale, 60 * scale * cosTilt, 0, 0, Math.PI * 2);
       ctx.stroke();
+    }
 
-      // Draw anchor indicator rings
-      ctx.beginPath();
-      ctx.arc(ptBase.x, ptBase.y, 2, 0, Math.PI * 2);
-      ctx.fillStyle = accentColor;
-      ctx.fill();
+    // F. PHASE 4 & 5: STRUCTURE READY & ACTIVATED - Vertical Volumetric Telemetry Energy Beam
+    if (phase >= 4) {
+      const ptBase = project(0, 0, 0);
+      
+      // Rise beam height over Phase 4
+      const beamFactor = Math.min(1, (progress - 80) / 15);
+      const beamHeight = 220 * beamFactor;
+      const ptTop = project(0, 0, -beamHeight);
 
-      ctx.beginPath();
-      ctx.arc(ptTop.x, ptTop.y, 2, 0, Math.PI * 2);
-      ctx.fill();
+      // Beam pulse factor on Phase 5
+      let pulseAlpha = 1.0;
+      if (phase === 5) {
+        pulseAlpha = 0.7 + Math.sin(Date.now() * 0.012) * 0.3; // Intense flickering
+      }
 
-      // Print indicator text label next to branch line
-      ctx.fillStyle = '#f8fafc';
-      ctx.font = '700 8px Share Tech Mono, monospace';
-      ctx.textAlign = branchLength > 0 ? 'left' : 'right';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(ind.label, ptTop.x + branchLength + (branchLength > 0 ? 4 : -4), ptTop.y);
-    });
+      // Layered volumetric line glow
+      const widths = [38, 22, 8, 2];
+      const alphas = [0.03, 0.08, 0.28, 0.85];
+      const colors = ['#f43f5e', '#f43f5e', '#ffffff', '#ffffff'];
 
-    // E. Draw bright glowing Core Center
+      for (let i = 0; i < 4; i++) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(ptBase.x, ptBase.y);
+        ctx.lineTo(ptTop.x, ptTop.y);
+        ctx.strokeStyle = colors[i];
+        ctx.lineWidth = widths[i];
+        ctx.globalAlpha = alphas[i] * pulseAlpha;
+        if (i === 3) {
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#f43f5e';
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Render floating dashboard indicators (widget maps)
+      if (beamFactor >= 0.7) {
+        const widgetAlpha = Math.min(1, (progress - 85) / 10);
+        ctx.save();
+        ctx.globalAlpha = widgetAlpha;
+
+        // Widget 1: Left Float [SYS_LKD]
+        const w1Start = project(0, 0, -60);
+        const w1End = { x: w1Start.x - 70, y: w1Start.y - 15 };
+        ctx.beginPath();
+        ctx.moveTo(w1Start.x, w1Start.y);
+        ctx.lineTo(w1End.x, w1End.y);
+        ctx.lineTo(w1End.x - 10, w1End.y);
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.3)';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+        
+        // Draw little panel box
+        const box1 = { x: w1End.x - 75, y: w1End.y - 12, w: 60, h: 22 };
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+        ctx.strokeRect(box1.x, box1.y, box1.w, box1.h);
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.05)';
+        ctx.fillRect(box1.x, box1.y, box1.w, box1.h);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '700 7px Share Tech Mono, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText("SYS_LKD: 99", box1.x + 4, box1.y + 8);
+        ctx.fillText("L-COR: nominal", box1.x + 4, box1.y + 16);
+
+        // Widget 2: Right Float [SYN_MAP]
+        const w2Start = project(0, 0, -130);
+        const w2End = { x: w2Start.x + 70, y: w2Start.y - 20 };
+        ctx.beginPath();
+        ctx.moveTo(w2Start.x, w2Start.y);
+        ctx.lineTo(w2End.x, w2End.y);
+        ctx.lineTo(w2End.x + 10, w2End.y);
+        ctx.strokeStyle = 'rgba(244, 63, 94, 0.3)';
+        ctx.stroke();
+
+        const box2 = { x: w2End.x + 10, y: w2End.y - 14, w: 68, h: 24 };
+        ctx.strokeStyle = 'rgba(244, 63, 94, 0.4)';
+        ctx.strokeRect(box2.x, box2.y, box2.w, box2.h);
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.05)';
+        ctx.fillRect(box2.x, box2.y, box2.w, box2.h);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText("SYN_MAP: 73%", box2.x + 4, box2.y + 9);
+        ctx.fillText("LATENCY: 2.4", box2.x + 4, box2.y + 17);
+
+        // Widget 3: Top Left [SECTOR-NX]
+        const w3Start = project(0, 0, -190);
+        const w3End = { x: w3Start.x - 50, y: w3Start.y - 10 };
+        ctx.beginPath();
+        ctx.moveTo(w3Start.x, w3Start.y);
+        ctx.lineTo(w3End.x, w3End.y);
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.3)';
+        ctx.stroke();
+
+        ctx.fillStyle = '#8b5cf6';
+        ctx.font = '700 6.5px Share Tech Mono, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText("[SECTOR-NX7 LOCKED]", w3End.x - 4, w3End.y + 2);
+
+        ctx.restore();
+      }
+    }
+
+    // G. Core center glowing ball (fades in Phase 2, is maximum bright in Phase 3/4)
     ctx.beginPath();
     const corePt = project(0, 0, 0);
-    const grad = ctx.createRadialGradient(corePt.x, corePt.y, 0, corePt.x, corePt.y, 40 * scale);
-    grad.addColorStop(0, '#ffffff');
-    grad.addColorStop(0.2, 'rgba(6, 182, 212, 0.7)');
-    grad.addColorStop(0.5, 'rgba(139, 92, 246, 0.2)');
-    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.arc(corePt.x, corePt.y, 40 * scale, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
+    const radiusScale = phase >= 3 ? 1.6 : (phase === 2 ? (1 + (progress - 40) / 20 * 0.6) : 1);
+    const coreGrad = ctx.createRadialGradient(corePt.x, corePt.y, 0, corePt.x, corePt.y, 35 * scale * radiusScale);
+    
+    // Gradient coloring shifts from Cyan -> Violet -> White Core
+    coreGrad.addColorStop(0, '#ffffff');
+    if (phase >= 3) {
+      coreGrad.addColorStop(0.15, '#ffffff');
+      coreGrad.addColorStop(0.35, 'rgba(244, 63, 94, 0.85)'); // Pink/magenta glow core
+      coreGrad.addColorStop(0.7, 'rgba(139, 92, 246, 0.2)');
+    } else {
+      coreGrad.addColorStop(0.2, 'rgba(6, 182, 212, 0.8)'); // Cyan core
+      coreGrad.addColorStop(0.5, 'rgba(139, 92, 246, 0.25)');
+    }
+    coreGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.arc(corePt.x, corePt.y, 35 * scale * radiusScale, 0, Math.PI * 2);
+    ctx.fillStyle = coreGrad;
     ctx.fill();
 
-    // F. Progress logic (count up loader)
-    progress += 0.45; // Approximately 3.7 seconds to reach 100
+    // H. Progress loader logic
+    progress += 0.42; // Speeds: takes about 4 seconds to boot
     if (progress > 100) progress = 100;
 
     // Update Percentage elements
@@ -1048,11 +1228,10 @@ function initPreloader() {
     if (pctElem) pctElem.textContent = formatPct;
     if (barElem) barElem.style.width = `${progress}%`;
 
-    // Process typewriter log terminal lines
+    // Process logs text outputs
     bootLogs.forEach((log, logIdx) => {
       if (progress >= log.threshold && logIdx > activeLogIndex) {
         activeLogIndex = logIdx;
-        // Append new line to logs screen
         const line = document.createElement('div');
         line.innerHTML = log.text;
         if (logsElem) {
@@ -1065,15 +1244,13 @@ function initPreloader() {
     // Check preloader completion
     if (progress >= 100) {
       setTimeout(() => {
-        // Trigger fade out
         container.classList.add('fade-out');
         cancelAnimationFrame(animationId);
         
-        // Remove panel from HTML layout after transition ends
         setTimeout(() => {
           container.remove();
         }, 1000);
-      }, 500);
+      }, 600);
       return;
     }
 

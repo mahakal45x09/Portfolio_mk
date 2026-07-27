@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initNeuralNetworkCanvas();
   initLossGraph();
   initAttentionGrid();
+  initArchTelemetryGraph();
+  initEcosystemNodes();
   initInferenceEngine();
   initContactForm();
 
@@ -1262,5 +1264,119 @@ function initPreloader() {
   resize();
   buildGalaxy();
   draw();
+}
+
+/* ==========================================================================
+   LIVE ARCHITECTURE TELEMETRY GRAPH
+   ========================================================================== */
+function initArchTelemetryGraph() {
+  const canvas = document.getElementById('archTelemetryCanvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    if (!canvas.parentElement) return;
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight || 65;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  let offset = 0;
+
+  function draw() {
+    const w = canvas.width;
+    const h = canvas.height;
+    if (w === 0 || h === 0) {
+      requestAnimationFrame(draw);
+      return;
+    }
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+    ctx.lineWidth = 1;
+    for (let y = 15; y < h; y += 15) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    offset += 0.035;
+
+    // Curve 1: Node Data Throughput (Cyan)
+    ctx.beginPath();
+    ctx.strokeStyle = '#00f3ff';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = 'rgba(0, 243, 255, 0.7)';
+    ctx.shadowBlur = 6;
+
+    for (let x = 0; x <= w; x += 4) {
+      const y = (h / 2) + Math.sin((x * 0.02) + offset) * 12 + Math.cos((x * 0.01) - offset) * 6;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Curve 2: System Latency (Magenta)
+    ctx.beginPath();
+    ctx.strokeStyle = '#f43f5e';
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = 'rgba(244, 63, 94, 0.7)';
+    ctx.shadowBlur = 6;
+
+    for (let x = 0; x <= w; x += 4) {
+      const y = (h / 2) + Math.sin((x * 0.025) - offset * 1.2) * 14 + Math.sin((x * 0.008) + offset) * 7;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+}
+
+/* ==========================================================================
+   INTERACTIVE AI TECHNOLOGY ECOSYSTEM NODES
+   ========================================================================== */
+function initEcosystemNodes() {
+  const nodes = document.querySelectorAll('.eco-node');
+  const nameElem = document.getElementById('ecoTechName');
+  const profElem = document.getElementById('ecoProficiency');
+  const projElem = document.getElementById('ecoProjectsCount');
+
+  nodes.forEach(node => {
+    // Hover: Update telemetry banner with tech details
+    node.addEventListener('mouseenter', () => {
+      const tech = node.getAttribute('data-tech') || 'Technology Node';
+      const prof = node.getAttribute('data-prof') || '90%';
+      const proj = node.getAttribute('data-projects') || 'Active Portfolio Projects';
+
+      if (nameElem) nameElem.textContent = `${tech}`;
+      if (profElem) profElem.textContent = `Proficiency: ${prof}`;
+      if (projElem) projElem.textContent = `Projects: ${proj}`;
+    });
+
+    // Click: Navigate to projects tab and filter/search by tech
+    node.addEventListener('click', () => {
+      const tech = node.getAttribute('data-tech');
+      if (typeof activateTab === 'function') {
+        activateTab('projects');
+      }
+
+      // Populate inference search input if present
+      const input = document.getElementById('largeInferenceInput') || document.getElementById('inferenceInput');
+      if (input && tech) {
+        input.value = tech;
+        input.dispatchEvent(new Event('input'));
+      }
+    });
+  });
 }
 

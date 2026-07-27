@@ -349,7 +349,8 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: 290px 1fr 310px;
   gap: 16px;
   padding: 16px 0;
-  overflow: hidden;
+  overflow-y: auto;
+  min-height: 0;
   height: calc(100vh - var(--header-height) - var(--footer-height));
 }
 
@@ -357,16 +358,18 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow: hidden;
+  overflow-y: auto;
+  min-height: 0;
   height: 100%;
 }
 
-/* Custom Grid Ratios for Center Column Panels */
+/* Custom Layout for Center Column Panels */
 .hud-column-center {
-  display: grid;
-  grid-template-rows: 1fr 200px;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   height: 100%;
+  overflow-y: auto;
 }
 
 /* ---------- HUD CARD COMPONENT ---------- */
@@ -932,62 +935,72 @@ h1, h2, h3, h4, h5, h6 {
   height: 12px;
 }
 
-/* --- ATTENTION GRID CARD --- */
-.attention-card {
-  padding: 10px 14px;
-}
-
-.attention-grid-container {
-  display: grid;
-  grid-template-columns: 1fr 20px;
-  gap: 8px;
-  flex: 1;
-  align-items: center;
-}
-
-.attention-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(8, 1fr);
-  gap: 2px;
-  aspect-ratio: 1;
-  background: rgba(255,255,255,0.01);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  padding: 2px;
-  border-radius: var(--radius-sm);
-}
-
-.attention-cell {
-  background: rgba(139, 92, 246, 0.03);
-  border: 1px solid rgba(139, 92, 246, 0.05);
-  border-radius: 1px;
-  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
-  cursor: crosshair;
-}
-.attention-cell:hover {
-  background: var(--neon-magenta) !important;
-  box-shadow: 0 0 6px var(--neon-magenta-glow);
-  z-index: 5;
-}
-
-.attention-scale {
+/* --- SKILL HEATMAP CARD --- */
+.skill-heatmap-list {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  font-family: var(--font-mono);
-  font-size: 8px;
-  color: var(--text-muted);
-  align-items: center;
+  gap: 10px;
   padding: 4px 0;
+  flex: 1;
 }
 
-.attention-scale-bar {
-  width: 4px;
-  flex: 1;
-  margin: 4px 0;
-  background: linear-gradient(to top, rgba(139, 92, 246, 0.05), var(--neon-purple), var(--neon-magenta));
-  border-radius: 2px;
+.heatmap-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.heatmap-row:hover {
+  background: rgba(0, 243, 255, 0.04);
+  border-color: rgba(0, 243, 255, 0.2);
+}
+
+.heatmap-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.heatmap-name {
+  color: var(--text-bright);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.heatmap-val {
+  color: var(--neon-cyan);
+  font-weight: 700;
+}
+
+.heatmap-bar-bg {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.heatmap-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-magenta));
+  box-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
+  transition: width 0.8s ease-in-out;
+}
+
+.heatmap-blocks {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--neon-cyan);
+  opacity: 0.8;
 }
 
 /* --- SYSTEM ALERTS CARD --- */
@@ -2192,6 +2205,310 @@ h1, h2, h3, h4, h5, h6 {
   .skills-panel-layout {
     grid-template-columns: 1fr;
   }
+}
+
+/* --- AI TECHNOLOGY ECOSYSTEM PANEL --- */
+.eco-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  overflow: visible !important;
+}
+
+.arch-live-badge {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--neon-cyan);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 243, 255, 0.1);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  padding: 4px 10px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+.arch-live-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--neon-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--neon-cyan);
+  animation: pulseGlow 1.2s infinite alternate;
+}
+
+.eco-telemetry-banner {
+  background: rgba(10, 10, 26, 0.85);
+  border: 1px solid rgba(0, 243, 255, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  backdrop-filter: blur(8px);
+}
+
+.eco-banner-label {
+  color: var(--neon-cyan);
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.eco-banner-tech {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+.eco-banner-prof {
+  color: var(--neon-magenta);
+  font-weight: bold;
+  margin-right: 12px;
+}
+
+.eco-banner-projects {
+  color: var(--neon-purple);
+  font-size: 10px;
+}
+
+.eco-diagram-container {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  padding: 10px 4px;
+}
+
+.eco-svg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.eco-line {
+  stroke: #00f3ff;
+  stroke-width: 2px;
+  stroke-dasharray: 5 3;
+  fill: none;
+  opacity: 0.75;
+  filter: drop-shadow(0 0 6px rgba(0, 243, 255, 0.5));
+}
+
+.eco-nodes-grid {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  min-height: 500px;
+  gap: 8px;
+}
+
+.eco-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.root-row { justify-content: center; }
+
+.eco-section-label {
+  font-family: var(--font-hud);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--neon-cyan);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 4px 0 2px 0;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+}
+
+.eco-node {
+  background: rgba(14, 14, 32, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(0, 243, 255, 0.05);
+}
+
+.pulse-anim {
+  animation: nodePulse 3.5s infinite ease-in-out alternate;
+}
+
+.eco-row:nth-child(2) .eco-node { animation-delay: 0.4s; }
+.eco-row:nth-child(3) .eco-node { animation-delay: 0.8s; }
+.eco-row:nth-child(4) .eco-node { animation-delay: 1.2s; }
+.eco-row:nth-child(5) .eco-node { animation-delay: 1.6s; }
+
+@keyframes nodePulse {
+  0% {
+    box-shadow: 0 0 6px rgba(0, 243, 255, 0.2);
+    border-color: rgba(0, 243, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(0, 243, 255, 0.6), 0 0 28px rgba(0, 243, 255, 0.3);
+    border-color: rgba(0, 243, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(0, 243, 255, 0.2);
+    border-color: rgba(0, 243, 255, 0.3);
+  }
+}
+
+.eco-node:hover {
+  transform: translateY(-3px) scale(1.06);
+  border-color: var(--neon-cyan) !important;
+  box-shadow: 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan-glow) !important;
+  z-index: 20;
+}
+
+.node-core {
+  border-color: rgba(139, 92, 246, 0.8);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.35), rgba(0, 243, 255, 0.2));
+  padding: 8px 28px;
+  box-shadow: 0 0 22px rgba(139, 92, 246, 0.5);
+}
+
+.node-core .node-label {
+  font-family: var(--font-hud);
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 8px rgba(139, 92, 246, 0.8);
+}
+
+.node-domain {
+  min-width: 120px;
+  padding: 6px 14px;
+}
+
+.node-domain.cyan { border-color: rgba(0, 243, 255, 0.6); background: linear-gradient(180deg, rgba(0, 243, 255, 0.2), rgba(10, 10, 25, 0.9)); }
+.node-domain.purple { border-color: rgba(139, 92, 246, 0.6); background: linear-gradient(180deg, rgba(139, 92, 246, 0.2), rgba(10, 10, 25, 0.9)); }
+.node-domain.pink { border-color: rgba(244, 63, 94, 0.6); background: linear-gradient(180deg, rgba(244, 63, 94, 0.2), rgba(10, 10, 25, 0.9)); }
+
+.node-badge {
+  font-family: var(--font-hud);
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--text-bright);
+}
+
+.node-tech {
+  min-width: 105px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+.cyan-tech { border-color: rgba(0, 243, 255, 0.3); }
+.purple-tech { border-color: rgba(139, 92, 246, 0.3); }
+.pink-tech { border-color: rgba(244, 63, 94, 0.3); }
+
+.node-backend {
+  border-color: rgba(234, 179, 8, 0.6);
+  background: rgba(234, 179, 8, 0.1);
+  min-width: 110px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-bright);
+}
+
+.node-deploy {
+  border-color: rgba(59, 130, 246, 0.6);
+  background: rgba(59, 130, 246, 0.1);
+  min-width: 110px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-bright);
+}
+
+/* --- TELEMETRY GRAPH SECTION INSIDE ARCHITECTURE CARD --- */
+.arch-graph-section {
+  background: rgba(8, 8, 20, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.arch-graph-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.arch-graph-title {
+  color: var(--neon-cyan);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.arch-graph-metrics {
+  display: flex;
+  gap: 12px;
+}
+
+.arch-metric-item {
+  color: var(--text-muted);
+}
+
+.arch-metric-item span {
+  color: var(--text-bright);
+  font-weight: bold;
+}
+
+.arch-canvas-wrapper {
+  height: 60px;
+  width: 100%;
+  position: relative;
+}
+
+#archTelemetryCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.arch-footer {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--neon-cyan);
+  text-align: center;
 }
 @media (max-width: 640px) {
   .skills-hologram-grid {

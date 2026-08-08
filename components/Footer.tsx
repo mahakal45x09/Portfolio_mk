@@ -20,11 +20,8 @@ const Footer = () => {
                         <a href={GENERAL_INFO.upworkProfile} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                             GitHub
                         </a>
-                        <a href="https://www.linkedin.com/in/ketanmahakal" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        <a href="https://www.linkedin.com/in/ketanmahakal4509" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                             LinkedIn
-                        </a>
-                        <a href="https://www.kaggle.com/ketanmahakal" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                            Kaggle
                         </a>
                     </div>
                 </div>

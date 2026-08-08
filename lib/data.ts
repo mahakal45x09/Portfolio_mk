@@ -1,19 +1,18 @@
 import { IProject } from '@/types';
 
 export const GENERAL_INFO = {
-    email: 'ketan.mahakal@gmail.com',
+    email: 'ketanmahakal123@gmail.com',
 
     emailSubject: "Let's collaborate on an AI/ML project",
     emailBody: 'Hi Ketan, I am reaching out to you regarding...',
 
     oldPortfolio: '#',
-    upworkProfile: 'https://github.com/ketanmahakal',
+    upworkProfile: 'https://github.com/mahakal45x09',
 };
 
 export const SOCIAL_LINKS = [
-    { name: 'github', url: 'https://github.com/ketanmahakal' },
-    { name: 'linkedin', url: 'https://www.linkedin.com/in/ketanmahakal' },
-    { name: 'kaggle', url: 'https://www.kaggle.com/ketanmahakal' },
+    { name: 'github', url: 'https://github.com/mahakal45x09' },
+    { name: 'linkedin', url: 'https://www.linkedin.com/in/ketanmahakal4509' },
 ];
 
 export const MY_STACK = {

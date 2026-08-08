@@ -1,9 +1,8 @@
 # 🤖 Ketan Mahakal — AI & Machine Learning Engineer Portfolio
 
-[![GitHub](https://img.shields.io/badge/GitHub-ketanmahakal-181717?style=for-the-badge&logo=github)](https://github.com/ketanmahakal)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-ketanmahakal-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/ketanmahakal)
-[![Kaggle](https://img.shields.io/badge/Kaggle-ketanmahakal-20BEFF?style=for-the-badge&logo=kaggle)](https://www.kaggle.com/ketanmahakal)
-[![Email](https://img.shields.io/badge/Email-ketan.mahakal%40gmail.com-EA4335?style=for-the-badge&logo=gmail)](mailto:ketan.mahakal@gmail.com)
+[![GitHub](https://img.shields.io/badge/GitHub-mahakal45x09-181717?style=for-the-badge&logo=github)](https://github.com/mahakal45x09)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-ketanmahakal4509-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/ketanmahakal4509)
+[![Email](https://img.shields.io/badge/Email-ketanmahakal123%40gmail.com-EA4335?style=for-the-badge&logo=gmail)](mailto:ketanmahakal123@gmail.com)
 
 Welcome to the official repository of my personal portfolio website, built with **Next.js 15**, **React 19**, **Tailwind CSS**, **GSAP**, and **TypeScript**. This platform showcases my projects, machine learning research, and experience as an AI & Machine Learning Engineer.
 
@@ -20,23 +19,7 @@ Welcome to the official repository of my personal portfolio website, built with 
 
 ## 🌟 Featured Projects
 
-1. **AI Resume Roaster & Analyzer**
-   - *Tech*: Python, GPT-4 API, LangChain, Next.js, FastAPI, PostgreSQL
-   - *Description*: AI-powered web app for document parsing, scoring, and automated feedback using RAG architecture.
 
-2. **Smart Vision Defect Detector**
-   - *Tech*: PyTorch, OpenCV, YOLOv8, FastAPI, Docker, Streamlit
-   - *Description*: Real-time industrial computer vision system with custom trained YOLOv8 achieving 94.2% mAP accuracy.
-
-3. **Predictive Customer Churn Engine**
-   - *Tech*: Python, Scikit-Learn, XGBoost, Pandas, Flask, Docker
-   - *Description*: End-to-end ML telemetry pipeline predicting customer churn risk with 0.91 ROC-AUC score.
-
-4. **Conversational LLM Knowledge Assistant**
-   - *Tech*: LangChain, Hugging Face, FAISS, FastAPI, React
-   - *Description*: RAG system indexing enterprise documentation using sentence-transformers and FAISS vector databases.
-
----
 
 ## 🛠️ Installation & Setup
 
@@ -65,10 +48,9 @@ Welcome to the official repository of my personal portfolio website, built with 
 
 ## 📬 Contact & Connect
 
-- **Email**: [ketan.mahakal@gmail.com](mailto:ketan.mahakal@gmail.com)
-- **GitHub**: [github.com/ketanmahakal](https://github.com/ketanmahakal)
-- **LinkedIn**: [linkedin.com/in/ketanmahakal](https://www.linkedin.com/in/ketanmahakal)
-- **Kaggle**: [kaggle.com/ketanmahakal](https://www.kaggle.com/ketanmahakal)
+- **Email**: [ketanmahakal123@gmail.com](mailto:ketanmahakal123@gmail.com)
+- **GitHub**: [github.com/mahakal45x09](https://github.com/mahakal45x09)
+- **LinkedIn**: [linkedin.com/in/ketanmahakal4509](https://www.linkedin.com/in/ketanmahakal4509)
 
 ---
 
